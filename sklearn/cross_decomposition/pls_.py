@@ -17,10 +17,10 @@ import numpy as np
 from scipy import linalg
 from ..utils import arpack
 from ..utils.validation import check_is_fitted, FLOAT_DTYPES
-import scipy
 
 __all__ = ['PLSCanonical', 'PLSRegression', 'PLSSVD']
 
+import scipy
 pinv2_args = {}
 if LooseVersion(scipy.__version__) >= LooseVersion('0.12'):
     # check_finite=False is an optimization available only in scipy >=0.12
