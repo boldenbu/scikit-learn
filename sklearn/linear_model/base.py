@@ -376,7 +376,7 @@ class SparseCoefMixin(object):
 
         Returns
         -------
-        self: estimator
+        self : estimator
         """
         msg = "Estimator, %(name)s, must be fitted before densifying."
         check_is_fitted(self, "coef_", msg=msg)
@@ -406,7 +406,7 @@ class SparseCoefMixin(object):
 
         Returns
         -------
-        self: estimator
+        self : estimator
         """
         msg = "Estimator, %(name)s, must be fitted before sparsifying."
         check_is_fitted(self, "coef_", msg=msg)
@@ -458,6 +458,8 @@ class LinearRegression(LinearModel, RegressorMixin):
         than its number of linearly independent columns), this is an empty
         array. If the target vector passed during the fit is 1-dimensional,
         this is a (1,) shape array.
+
+        .. versionadded:: 0.18
 
     intercept_ : array
         Independent term in the linear model.

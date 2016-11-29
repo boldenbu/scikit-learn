@@ -36,13 +36,15 @@ class IsolationForest(BaseBagging):
     length from the root node to the terminating node.
 
     This path length, averaged over a forest of such random trees, is a
-    measure of abnormality and our decision function.
+    measure of normality and our decision function.
 
     Random partitioning produces noticeably shorter paths for anomalies.
     Hence, when a forest of random trees collectively produce shorter path
     lengths for particular samples, they are highly likely to be anomalies.
 
     Read more in the :ref:`User Guide <isolation_forest>`.
+
+    .. versionadded:: 0.18
 
     Parameters
     ----------
@@ -64,6 +66,7 @@ class IsolationForest(BaseBagging):
 
     max_features : int or float, optional (default=1.0)
         The number of features to draw from X to train each base estimator.
+
             - If int, then draw `max_features` features.
             - If float, then draw `max_features * X.shape[1]` features.
 
@@ -105,6 +108,7 @@ class IsolationForest(BaseBagging):
     .. [2] Liu, Fei Tony, Ting, Kai Ming and Zhou, Zhi-Hua. "Isolation-based
            anomaly detection." ACM Transactions on Knowledge Discovery from
            Data (TKDD) 6.1 (2012): 3.
+
     """
 
     def __init__(self,

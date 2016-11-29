@@ -51,11 +51,11 @@ with::
 
 .. note::
 
-   joblib.dump returns a list of filenames. Each individual numpy array
-   contained in the ``clf`` object is serialized as a separate file on the
-   filesystem. All files are required in the same folder when reloading the
-   model with joblib.load.
+   ``joblib.dump`` and ``joblib.load`` functions also accept file-like object
+   instead of filenames. More information on data persistence with Joblib is
+   available `here <https://pythonhosted.org/joblib/persistence.html>`_.
 
+.. _persistence_limitations:
 
 Security & maintainability limitations
 --------------------------------------
@@ -80,6 +80,10 @@ additional metadata should be saved along the pickled model:
 
 This should make it possible to check that the cross-validation score is in the
 same range as before.
+
+Since a model internal representation may be different on two different
+architectures, dumping a model on one architecture and loading it on
+another architecture is not supported.
 
 If you want to know more about these issues and explore other possible
 serialization methods, please refer to this

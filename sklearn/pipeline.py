@@ -136,13 +136,13 @@ class Pipeline(_BasePipeline):
     Pipeline(steps=[...])
     >>> prediction = anova_svm.predict(X)
     >>> anova_svm.score(X, y)                        # doctest: +ELLIPSIS
-    0.77...
+    0.829...
     >>> # getting the selected features chosen by anova_filter
     >>> anova_svm.named_steps['anova'].get_support()
     ... # doctest: +NORMALIZE_WHITESPACE
-    array([ True,  True,  True, False, False,  True, False,  True,  True, True,
-           False, False,  True, False,  True, False, False, False, False,
-           True], dtype=bool)
+    array([False, False,  True,  True, False, False, True,  True, False,
+           True,  False,  True,  True, False, True,  False, True, True,
+           False, False], dtype=bool)
     """
 
     # BaseEstimator interface
@@ -157,7 +157,7 @@ class Pipeline(_BasePipeline):
 
         Parameters
         ----------
-        deep: boolean, optional
+        deep : boolean, optional
             If True, will return the parameters for this estimator and
             contained subobjects that are estimators.
 
@@ -353,10 +353,7 @@ class Pipeline(_BasePipeline):
         -------
         y_pred : array-like
         """
-        Xt = X
-        for name, transform in self.steps[:-1]:
-            if transform is not None:
-                Xt = transform.transform(Xt)
+        Xt, fit_params = self._fit(X, y, **fit_params)
         return self.steps[-1][-1].fit_predict(Xt, y, **fit_params)
 
     @if_delegate_has_method(delegate='_final_estimator')
@@ -484,7 +481,7 @@ class Pipeline(_BasePipeline):
         return Xt
 
     @if_delegate_has_method(delegate='_final_estimator')
-    def score(self, X, y=None):
+    def score(self, X, y=None, sample_weight=None):
         """Apply transforms, and score with the final estimator
 
         Parameters
@@ -497,6 +494,10 @@ class Pipeline(_BasePipeline):
             Targets used for scoring. Must fulfill label requirements for all
             steps of the pipeline.
 
+        sample_weight : array-like, default=None
+            If not None, this argument is passed as ``sample_weight`` keyword
+            argument to the ``score`` method of the final estimator.
+
         Returns
         -------
         score : float
@@ -505,7 +506,10 @@ class Pipeline(_BasePipeline):
         for name, transform in self.steps[:-1]:
             if transform is not None:
                 Xt = transform.transform(Xt)
-        return self.steps[-1][-1].score(Xt, y)
+        score_params = {}
+        if sample_weight is not None:
+            score_params['sample_weight'] = sample_weight
+        return self.steps[-1][-1].score(Xt, y, **score_params)
 
     @property
     def classes_(self):
@@ -602,14 +606,14 @@ class FeatureUnion(_BasePipeline, TransformerMixin):
 
     Parameters
     ----------
-    transformer_list: list of (string, transformer) tuples
+    transformer_list : list of (string, transformer) tuples
         List of transformer objects to be applied to the data. The first
         half of each tuple is the name of the transformer.
 
-    n_jobs: int, optional
+    n_jobs : int, optional
         Number of jobs to run in parallel (default 1).
 
-    transformer_weights: dict, optional
+    transformer_weights : dict, optional
         Multiplicative weights for features per transformer.
         Keys are transformer names, values the weights.
 
@@ -625,7 +629,7 @@ class FeatureUnion(_BasePipeline, TransformerMixin):
 
         Parameters
         ----------
-        deep: boolean, optional
+        deep : boolean, optional
             If True, will return the parameters for this estimator and
             contained subobjects that are estimators.
 
@@ -796,7 +800,7 @@ def make_union(*transformers):
     >>> make_union(PCA(), TruncatedSVD())    # doctest: +NORMALIZE_WHITESPACE
     FeatureUnion(n_jobs=1,
            transformer_list=[('pca',
-                              PCA(copy=True, iterated_power=4,
+                              PCA(copy=True, iterated_power='auto',
                                   n_components=None, random_state=None,
                                   svd_solver='auto', tol=0.0, whiten=False)),
                              ('truncatedsvd',
